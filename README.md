@@ -22,7 +22,3 @@ const module = await import('./not-found.js')
 //
 //
 ```
-
-## Gitpod
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/lvce-editor/import-script)
