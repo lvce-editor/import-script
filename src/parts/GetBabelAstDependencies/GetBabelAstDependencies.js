@@ -52,7 +52,10 @@ export const getBabelAstDependencies = (code, ast) => {
   const { body } = program
   const dependencies = []
   for (const node of body) {
-    if (node.type === BabelNodeType.ImportDeclaration || node.type === BabelNodeType.ExportAllDeclaration) {
+    if (
+      node.type === BabelNodeType.ImportDeclaration ||
+      node.type === BabelNodeType.ExportAllDeclaration
+    ) {
       const relativePath = node.source.extra.rawValue
       const start = node.source.start
       const end = node.source.end
@@ -65,14 +68,17 @@ export const getBabelAstDependencies = (code, ast) => {
       node.declarations[0].init &&
       node.declarations[0].init.type === BabelNodeType.AwaitExpression &&
       node.declarations[0].init.argument &&
-      node.declarations[0].init.argument.type === BabelNodeType.CallExpression &&
+      node.declarations[0].init.argument.type ===
+        BabelNodeType.CallExpression &&
       node.declarations[0].init.argument.callee &&
       node.declarations[0].init.argument.callee.type === BabelNodeType.Import &&
       node.declarations[0].init.argument.arguments &&
       node.declarations[0].init.argument.arguments[0] &&
-      node.declarations[0].init.argument.arguments[0].type === BabelNodeType.StringLiteral
+      node.declarations[0].init.argument.arguments[0].type ===
+        BabelNodeType.StringLiteral
     ) {
-      const relativePath = node.declarations[0].init.argument.arguments[0].extra.rawValue
+      const relativePath =
+        node.declarations[0].init.argument.arguments[0].extra.rawValue
       const start = node.declarations[0].init.argument.arguments[0].start
       const end = node.declarations[0].init.argument.arguments[0].end
       dependencies.push({ relativePath, code, start, end })

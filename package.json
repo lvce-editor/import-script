@@ -6,6 +6,7 @@
   "type": "module",
   "types": "src/index.d.ts",
   "scripts": {
+    "lint": "prettier --check . && knip --no-config-hints",
     "test": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --detectOpenHandles --forceExit",
     "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch"
   },
@@ -15,11 +16,13 @@
   "author": "Lvce Editor",
   "license": "MIT",
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/jest": "^29.5.12",
     "execa": "^8.0.1",
     "jest": "^29.7.0",
+    "knip": "^6.29.0",
     "prettier": "^3.2.5",
     "rollup": "^4.13.0",
     "typescript": "^6.0.0"
