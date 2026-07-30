@@ -1,8 +1,6 @@
 import { BabelParseError } from '../BabelParseError/BabelParseError.js'
 import * as BabelParser from '../BabelParser/BabelParser.js'
 import * as BabelSourceType from '../BabelSourceType/BabelSourceType.js'
-import { ContentSecurityPolicyError } from '../ContentSecurityPolicyError/ContentSecurityPolicyError.js'
-import * as ContentSecurityPolicyErrorState from '../ContentSecurityPolicyErrorState/ContentSecurityPolicyErrorState.js'
 import { DependencyNotFoundError } from '../DependencyNotFoundError/DependencyNotFoundError.js'
 import * as GetBabelAstDependencies from '../GetBabelAstDependencies/GetBabelAstDependencies.js'
 import * as HttpStatusCode from '../HttpStatusCode/HttpStatusCode.js'
@@ -21,11 +19,23 @@ const getErrorInDependencies = async (url, dependencies, seenDependencies) => {
     const dependencyResponse = await fetch(dependencyUrl)
     // } catch (error) {}
     if (dependencyResponse.ok) {
-      await tryToGetActualErrorMessageInternal(null, dependencyUrl, dependencyResponse, seenDependencies)
+      await tryToGetActualErrorMessageInternal(
+        null,
+        dependencyUrl,
+        dependencyResponse,
+        seenDependencies,
+      )
     } else {
       switch (dependencyResponse.status) {
         case HttpStatusCode.NotFound:
-          throw new DependencyNotFoundError(dependency.code, dependency.start, dependency.end, dependency.relativePath, dependencyUrl, url)
+          throw new DependencyNotFoundError(
+            dependency.code,
+            dependency.start,
+            dependency.end,
+            dependency.relativePath,
+            dependencyUrl,
+            url,
+          )
         default:
           break
         // return `Failed to import ${url}: ${error}`
@@ -34,7 +44,15 @@ const getErrorInDependencies = async (url, dependencies, seenDependencies) => {
   }
 }
 
-const tryToGetActualErrorMessageInternal = async (error, url, response, seenDependencies) => {
+const tryToGetActualErrorMessageInternal = async (
+  error,
+  url,
+  response,
+  seenDependencies,
+) => {
+  if (!response.headers.get('content-type')) {
+    return `Failed to import ${url}: Missing Content-Type header for javascript`
+  }
   let text
   try {
     text = await response.text()
@@ -52,12 +70,11 @@ const tryToGetActualErrorMessageInternal = async (error, url, response, seenDepe
     }
     throw error
   }
-  const dependencies = GetBabelAstDependencies.getBabelAstDependencies(text, ast)
+  const dependencies = GetBabelAstDependencies.getBabelAstDependencies(
+    text,
+    ast,
+  )
   await getErrorInDependencies(url, dependencies, seenDependencies)
-  if (ContentSecurityPolicyErrorState.hasRecentErrors()) {
-    const recentError = ContentSecurityPolicyErrorState.getRecentError()
-    throw new ContentSecurityPolicyError(recentError.violatedDirective, recentError.sourceFile, recentError.lineNumber, recentError.columnNumber)
-  }
   return `Failed to import ${url}: Unknown Network Error`
 }
 

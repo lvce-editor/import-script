@@ -10,7 +10,14 @@ const getErrorStack = (message, sourceUrl, line, column) => {
 }
 
 export class DependencyNotFoundError extends Error {
-  constructor(code, start, end, dependencyRelativePath, dependencyUrl, sourceUrl) {
+  constructor(
+    code,
+    start,
+    end,
+    dependencyRelativePath,
+    dependencyUrl,
+    sourceUrl,
+  ) {
     super(getErrorMessage(dependencyRelativePath))
     this.name = 'DependencyNotFoundError'
     const { line, column } = GetLineAndColumn.getLineAndColumn(code, start, end)

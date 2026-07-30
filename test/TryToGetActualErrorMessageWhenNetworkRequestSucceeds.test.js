@@ -47,10 +47,13 @@ class BabelSyntaxError extends SyntaxError {
 test('tryToGetActualErrorMessage - syntax error - identifier has already been declared', async () => {
   // @ts-ignore
   BabelParser.parse.mockImplementation(() => {
-    throw new BabelSyntaxError("Identifier 'x' has already been declared. (3:4)", {
-      line: 3,
-      column: 4,
-    })
+    throw new BabelSyntaxError(
+      "Identifier 'x' has already been declared. (3:4)",
+      {
+        line: 3,
+        column: 4,
+      },
+    )
   })
   const error = await getError(
     TryToGetActualErrorMessageWhenNetworkRequestSucceeds.tryToGetActualErrorMessage(
@@ -103,7 +106,13 @@ test('tryToGetActualErrorMessage - missing content type header', async () => {
   })
   const response = new Response(``, {})
   response.headers.delete('Content-Type')
-  expect(await TryToGetActualErrorMessageWhenNetworkRequestSucceeds.tryToGetActualErrorMessage(null, 'test://extension.js', response)).toBe(
+  expect(
+    await TryToGetActualErrorMessageWhenNetworkRequestSucceeds.tryToGetActualErrorMessage(
+      null,
+      'test://extension.js',
+      response,
+    ),
+  ).toBe(
     'Failed to import test://extension.js: Missing Content-Type header for javascript',
   )
 })
